@@ -1,0 +1,127 @@
+from netmiko import ConnectHandler
+import time
+from pythonping import ping
+from scapy.layers.l2 import ARP, Ether, srp
+import re
+
+# Define the hostnames for the switches
+switch_names = []
+
+# Define the IPs to be assigned to the switches
+available_ips = []
+
+# Common credentials for the switches
+common_credentials = {
+    'device_type': 'ubiquiti_edgeswitch',
+    'username': 'ubnt',  # Default username edit ifnecessary
+    'password': 'ubnt',  # Default password edit if necessary
+}
+
+# VLAN configuration commands template
+config_commands_template = [
+    'configure',
+    'vlan database',
+    'vlan ###', # enter vlan tags remove/add if needed
+    'vlan ###',
+    'vlan ###',
+    'vlan ###',
+    'vlan ###',
+    'exit',
+    'interface 0/1',
+    'switchport mode access',
+    'switchport access vlan ###',
+    'exit',
+    'interface 0/2',
+    'switchport mode access',
+    'switchport access vlan ###',
+    'exit',
+    'interface 0/3',
+    'switchport mode access',
+    'switchport access vlan ###',
+    'exit',
+    'interface 0/4',
+    'switchport mode access',
+    'switchport access vlan ###',
+    'exit',
+    'interface 0/7',
+    'switchport mode trunk',
+    'switchport trunk allowed vlan add ###,###',
+    'exit',
+    'interface 0/8',
+    'switchport mode trunk',
+    'switchport trunk allowed vlan add ###-###',
+    'exit',
+    'spanning-tree mode none',
+    'hostname {}',
+    'ip address {}',
+    'exit',
+    'write memory'
+]
+
+def discover_switches():
+    """Discover switches on the network using ping and ARP."""
+    discovered_ips = []
+    subnet = '###.###.###.###' # define subnet
+    for i in range(10, 13):
+        ip = f'{subnet}{i}'
+        response = ping(ip, count=1, timeout=1)
+        if response.success():
+            discovered_ips.append(ip)
+    return discovered_ips
+
+def get_mac_from_ip(ip):
+    """Get the MAC address from an IP using ARP and scapy."""
+    try:
+        arp_request = ARP(pdst=ip)
+        broadcast = Ether(dst="ff:ff:ff:ff:ff:ff")
+        arp_request_broadcast = broadcast/arp_request
+        answered_list = srp(arp_request_broadcast, timeout=1, verbose=False)[0]
+        print(answered_list)
+        for sent, received in answered_list:
+            return received.hwsrc
+        print(f"No MAC address found for IP {ip}")
+        return None
+    except Exception as e:
+        print(f"Error retrieving MAC address for IP {ip}: {e}")
+        return None
+
+def is_ubiquiti_mac(mac):
+    """Check if the MAC address belongs to a Ubiquiti device."""
+    oui_prefix = ['24:a4:3c', 'fc:ec:da', '80:2a:a8', '68:d7:9a']  #a few prefixes for Ubiquiti devices
+    return any(mac.lower().startswith(prefix) for prefix in oui_prefix)
+
+def configure_switch(ip, name, new_ip):
+    """Configure the switch with the given IP, name, and new IP."""
+    switch_config = common_credentials.copy()
+    switch_config['ip'] = ip
+    connection = ConnectHandler(**switch_config)
+    connection.enable()  # Enter enable mode if required
+
+    # Format the config commands with the switch name and new IP
+    config_commands = [cmd.format(name, new_ip) if '{}' in cmd else cmd for cmd in config_commands_template]
+
+    connection.send_config_set(config_commands)
+    connection.disconnect()
+    print(f'Successfully configured switch {name} at {ip} with new IP {new_ip}')
+
+# Discover switches on the network
+print("Discovering switches on the network...")
+time.sleep(2)  # Wait for switches to obtain IPs via DHCP
+discovered_ips = discover_switches()
+
+# Filter discovered IPs to find Ubiquiti switches
+ubiquiti_switches = []
+for ip in discovered_ips:
+    mac = get_mac_from_ip(ip)
+    if mac and is_ubiquiti_mac(mac):
+        ubiquiti_switches.append(ip)
+
+# Configure each discovered Ubiquiti switch
+for idx, ip in enumerate(ubiquiti_switches):
+    if idx < len(switch_names):
+        try:
+            configure_switch(ip, switch_names[idx], available_ips[idx])
+        except Exception as e:
+            print(f'Failed to configure switch {switch_names[idx]} at {ip}: {e}')
+    else:
+        print(f"More switches discovered than names provided. Extra switch at IP {ip} will not be configured.")
