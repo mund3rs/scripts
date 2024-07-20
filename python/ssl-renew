@@ -11,5 +11,5 @@ def renew_ssl_certificate(domain):
         print(result.stderr.decode())
 
 if __name__ == "__main__":
-    domain = 'yourdomain.com'
+    domain = 'domain.com'
     renew_ssl_certificate(domain)

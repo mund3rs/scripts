@@ -10,9 +10,9 @@ def backup_postgresql(db_name, user, password, host, port, backup_dir):
     print(f"Backup completed: {backup_file}")
 
 if __name__ == "__main__":
-    db_name = 'your_database'
-    user = 'your_db_user'
-    password = 'your_db_password'
+    db_name = 'database'
+    user = 'db_user'
+    password = 'db_password'
     host = 'localhost'
     port = '5432'
     backup_dir = '/path/to/backup'

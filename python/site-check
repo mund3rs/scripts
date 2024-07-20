@@ -11,5 +11,5 @@ def check_website_status(url):
         print(f"Failed to reach {url}: {e}")
 
 if __name__ == "__main__":
-    url = 'http://yourwebsite.com'
+    url = 'http://website.com'
     check_website_status(url)

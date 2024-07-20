@@ -13,5 +13,5 @@ def list_vm_status(subscription_id):
                 print(f"VM: {vm.name}, Status: {status.display_status}")
 
 if __name__ == "__main__":
-    subscription_id = 'your_subscription_id'
+    subscription_id = 'subscription_id'
     list_vm_status(subscription_id)

@@ -12,10 +12,10 @@ def transfer_file(ssh_client, local_file, remote_path):
         scp.put(local_file, remote_path)
 
 if __name__ == "__main__":
-    server = 'your.server.com'
+    server = 'server.com'
     port = 22
-    user = 'your_username'
-    password = 'your_password'
+    user = 'username'
+    password = 'password'
     local_file = '/path/to/local/file'
     remote_path = '/path/to/remote/destination'
     
