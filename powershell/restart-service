@@ -1,0 +1,9 @@
+$serviceName = "Spooler"
+$service = Get-Service -Name $serviceName
+
+if ($service.Status -ne "Running") {
+    Restart-Service -Name $serviceName
+    Write-Output "Service $serviceName was not running and has been restarted."
+} else {
+    Write-Output "Service $serviceName is running."
+}

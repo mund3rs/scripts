@@ -1,0 +1,4 @@
+$wmi = Get-WmiObject -Class Win32_OperatingSystem
+$uptime = (Get-Date) - $wmi.ConvertToDateTime($wmi.LastBootUpTime)
+
+Write-Output "System Uptime: $([math]::Floor($uptime.TotalDays)) days, $uptime.Hours hours, $uptime.Minutes minutes"

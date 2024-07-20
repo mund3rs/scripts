@@ -1,0 +1,9 @@
+#!/bin/bash
+# MySQL Database Backup Script
+DB_NAME="database"
+DB_USER="user"
+DB_PASS="password"
+BACKUP_DIR="/path/to/backup"
+
+DATE=$(date +%Y%m%d_%H%M%S)
+mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_DIR/$DB_NAME_$DATE.sql

@@ -1,0 +1,2 @@
+Get-ItemProperty HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\* | Select-Object DisplayName, DisplayVersion, Publisher, InstallDate | Export-Csv -Path "C:\installed_programs.csv" -NoTypeInformation
+Write-Output "List of installed programs exported to C:\installed_programs.csv"

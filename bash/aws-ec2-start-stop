@@ -1,0 +1,10 @@
+#!/bin/bash
+# AWS EC2 Instance Start/Stop Script
+INSTANCE_ID=$1
+REGION="eu-north-1"
+
+# Start Instance
+aws ec2 start-instances --instance-ids $INSTANCE_ID --region $REGION
+
+# Stop Instance
+aws ec2 stop-instances --instance-ids $INSTANCE_ID --region $REGION

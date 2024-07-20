@@ -1,0 +1,11 @@
+#!/bin/bash
+# Automated Deployment Script
+REPO_URL="https://github.com/username/repo.git"
+DEPLOY_DIR="/var/www/html/app"
+
+# Pull latest changes
+cd $DEPLOY_DIR
+git pull $REPO_URL
+
+# Restart web server
+sudo systemctl restart apache2

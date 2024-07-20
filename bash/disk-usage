@@ -1,0 +1,12 @@
+#!/bin/bash
+# Disk Usage Monitoring Script
+THRESHOLD=80
+
+df -H | grep -vE '^Filesystem|tmpfs|cdrom' | awk '{ print $5 " " $1 }' | while read output;
+do
+  USEP=$(echo $output | awk '{ print $1}' | cut -d'%' -f1  )
+  PART=$(echo $output | awk '{ print $2 }' )
+  if [ $USEP -ge $THRESHOLD ]; then
+    echo "Warning: $PART is ${USEP}% full."
+  fi
+done

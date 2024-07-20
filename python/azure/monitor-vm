@@ -1,0 +1,17 @@
+from azure.mgmt.compute import ComputeManagementClient
+from azure.identity import DefaultAzureCredential
+
+def list_vm_status(subscription_id):
+    credential = DefaultAzureCredential()
+    compute_client = ComputeManagementClient(credential, subscription_id)
+    
+    for vm in compute_client.virtual_machines.list_all():
+        vm_instance_view = compute_client.virtual_machines.instance_view(vm.id.split('/')[-1], vm.name)
+        statuses = vm_instance_view.statuses
+        for status in statuses:
+            if status.code.startswith('PowerState/'):
+                print(f"VM: {vm.name}, Status: {status.display_status}")
+
+if __name__ == "__main__":
+    subscription_id = 'your_subscription_id'
+    list_vm_status(subscription_id)

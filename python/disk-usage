@@ -1,0 +1,12 @@
+import os
+import shutil
+
+def check_disk_usage(threshold):
+    total, used, free = shutil.disk_usage("/")
+    percent_used = (used / total) * 100
+    if percent_used >= threshold:
+        print(f"Warning: Disk usage is {percent_used:.2f}%")
+
+if __name__ == "__main__":
+    threshold = 80
+    check_disk_usage(threshold)

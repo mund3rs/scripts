@@ -1,0 +1,11 @@
+#!/bin/bash
+# SSH Key Setup Script
+USER_NAME=$1
+PUB_KEY="your-public-ssh-key"
+
+# Create .ssh directory if it doesn't exist
+sudo -u $USER_NAME mkdir -p /home/$USER_NAME/.ssh
+
+# Add public key to authorised_keys
+echo $PUB_KEY | sudo -u $USER_NAME tee -a /home/$USER_NAME/.ssh/authorised_keys
+sudo -u $USER_NAME chmod 600 /home/$USER_NAME/.ssh/authorised_keys

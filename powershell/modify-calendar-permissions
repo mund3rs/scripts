@@ -1,0 +1,26 @@
+Install-Module -Name ExchangeOnlineManagement
+#
+Connect-ExchangeOnline -UserPrincipalName youradmin@yourdomain.com -ShowProgress $true
+#
+# Function to prompt for user input
+function Prompt-UserInput {
+    param (
+        [string]$PromptMessage
+    )
+    Read-Host -Prompt $PromptMessage
+}
+
+# Prompt for user attributes
+$calendarOwner = Prompt-UserInput -PromptMessage "Enter the email address of the calendar owner"
+$delegateUser = Prompt-UserInput -PromptMessage "Enter the email address of the user to be granted editor permissions"
+
+# Grant editor permissions
+try {
+    Add-MailboxFolderPermission -Identity "$calendarOwner:\Calendar" -User $delegateUser -AccessRights Editor
+    Write-Host "Editor permissions granted to $delegateUser on $calendarOwner's calendar."
+} catch {
+    Write-Host "An error occurred: $_"
+}
+
+# Disconnect from Exchange Online
+Disconnect-ExchangeOnline -Confirm:$false

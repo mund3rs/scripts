@@ -1,0 +1,7 @@
+$backupPath = "C:\GPO_Backup"
+if (-not (Test-Path $backupPath)) {
+    New-Item -ItemType Directory -Path $backupPath
+}
+
+Backup-GPO -All -Path $backupPath
+Write-Output "Backup of all GPOs completed. Backup location: $backupPath"

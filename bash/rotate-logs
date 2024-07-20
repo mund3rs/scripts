@@ -1,0 +1,6 @@
+#!/bin/bash
+# Log Rotation Script
+LOG_DIR="/var/log/app"
+ARCHIVE_DIR="/var/log/app/archive"
+find $LOG_DIR -type f -name "*.log" -mtime +7 -exec mv {} $ARCHIVE_DIR \;
+find $ARCHIVE_DIR -type f -name "*.log" -mtime +30 -exec rm {} \;

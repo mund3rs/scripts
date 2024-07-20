@@ -1,0 +1,15 @@
+import os
+import subprocess
+
+def renew_ssl_certificate(domain):
+    command = f"certbot renew --non-interactive --quiet --renew-hook 'systemctl reload nginx'"
+    result = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    if result.returncode == 0:
+        print(f"SSL certificate for {domain} renewed successfully.")
+    else:
+        print(f"Failed to renew SSL certificate for {domain}.")
+        print(result.stderr.decode())
+
+if __name__ == "__main__":
+    domain = 'yourdomain.com'
+    renew_ssl_certificate(domain)

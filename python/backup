@@ -1,0 +1,13 @@
+import os
+import tarfile
+from datetime import datetime
+
+def backup(source_dir, dest_dir):
+    date = datetime.now().strftime('%Y%m%d_%H%M%S')
+    with tarfile.open(f"{dest_dir}/backup_{date}.tar.gz", "w:gz") as tar:
+        tar.add(source_dir, arcname=os.path.basename(source_dir))
+
+if __name__ == "__main__":
+    source_dir = "/path/to/source"
+    dest_dir = "/path/to/destination"
+    backup(source_dir, dest_dir)

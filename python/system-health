@@ -1,0 +1,20 @@
+import psutil
+import shutil
+
+def get_system_health():
+    cpu_usage = psutil.cpu_percent(interval=1)
+    memory_info = psutil.virtual_memory()
+    disk_usage = shutil.disk_usage("/")
+    
+    report = f"""
+    System Health Report:
+    ---------------------
+    CPU Usage: {cpu_usage}%
+    Memory Usage: {memory_info.percent}%
+    Disk Usage: {disk_usage.used // (2**30)} GiB used / {disk_usage.total // (2**30)} GiB total
+    """
+    return report
+
+if __name__ == "__main__":
+    report = get_system_health()
+    print(report)

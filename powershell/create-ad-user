@@ -1,0 +1,51 @@
+Import-Module ActiveDirectory
+
+# Function to prompt for user input
+function Prompt-UserInput {
+    param (
+        [string]$PromptMessage
+    )
+    Read-Host -Prompt $PromptMessage
+}
+
+# Prompt for user attributes
+$firstName = Prompt-UserInput -PromptMessage "Enter First Name"
+$lastName = Prompt-UserInput -PromptMessage "Enter Last Name"
+$location = Prompt-UserInput -PromptMessage "Enter Location (e.g., OU=Users,DC=yourdomain,DC=com)"
+$password = Prompt-UserInput -PromptMessage "Enter Password"
+
+# Generate username and email
+$username = "$firstName.$lastName"
+$userPrincipalName = "$username@yourdomain.com"
+$alias = $firstName
+
+# Check if username or alias already exists
+$userExists = Get-ADUser -Filter {SamAccountName -eq $username -or SamAccountName -eq $alias}
+
+while ($userExists) {
+    Write-Host "Username '$username' or alias '$alias' already exists. Enter a new username."
+    $firstName = Prompt-UserInput -PromptMessage "Enter First Name"
+    $lastName = Prompt-UserInput -PromptMessage "Enter Last Name"
+    $username = "$firstName.$lastName"
+    $userPrincipalName = "$username@yourdomain.com"
+    $alias = $firstName
+    $userExists = Get-ADUser -Filter {SamAccountName -eq $username -or SamAccountName -eq $alias}
+}
+
+# Create the user
+$accountPassword = ConvertTo-SecureString $password -AsPlainText -Force
+
+New-ADUser -Name "$firstName $lastName" `
+           -GivenName $firstName `
+           -Surname $lastName `
+           -SamAccountName $username `
+           -UserPrincipalName $userPrincipalName `
+           -Path $location `
+           -AccountPassword $accountPassword `
+           -Enabled $true
+
+# Set email alias
+Set-ADUser -Identity $username -EmailAddress $userPrincipalName
+Set-ADUser -Identity $username -Add @{proxyAddresses="SMTP:$userPrincipalName","smtp:$alias@yourdomain.com"}
+
+Write-Host "User '$firstName $lastName' created successfully with username '$username' and email '$userPrincipalName'. Alias '$alias@yourdomain.com' also set for email."

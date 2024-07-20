@@ -1,0 +1,9 @@
+$eventIDs = @()
+$logName = ""
+$logFile = "C:\EventLogMonitor.txt"
+
+Get-WinEvent -LogName $logName -FilterHashtable @{Id=$eventIDs} | ForEach-Object {
+    Add-Content -Path $logFile -Value "$($_.TimeCreated): $($_.Id) - $($_.Message)"
+}
+
+Write-Output "Event log monitoring completed. Results logged to $logFile."

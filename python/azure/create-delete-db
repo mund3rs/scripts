@@ -1,0 +1,29 @@
+from azure.mgmt.sql import SqlManagementClient
+from azure.identity import DefaultAzureCredential
+
+def create_sql_database(subscription_id, resource_group, server_name, database_name):
+    credential = DefaultAzureCredential()
+    sql_client = SqlManagementClient(credential, subscription_id)
+    
+    database_params = {
+        'location': 'your_location',
+        'sku': {'name': 'S0', 'tier': 'Standard', 'capacity': 10}
+    }
+    
+    sql_client.databases.create_or_update(resource_group, server_name, database_name, database_params)
+    print(f"Creating SQL database {database_name}")
+
+def delete_sql_database(subscription_id, resource_group, server_name, database_name):
+    credential = DefaultAzureCredential()
+    sql_client = SqlManagementClient(credential, subscription_id)
+    
+    sql_client.databases.delete(resource_group, server_name, database_name)
+    print(f"Deleting SQL database {database_name}")
+
+if __name__ == "__main__":
+    subscription_id = 'your_subscription_id'
+    resource_group = 'your_resource_group'
+    server_name = 'your_server_name'
+    database_name = 'your_database_name'
+    create_sql_database(subscription_id, resource_group, server_name, database_name)
+    # delete_sql_database(subscription_id, resource_group, server_name, database_name)  # Uncomment to delete the database

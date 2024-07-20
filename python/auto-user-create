@@ -1,0 +1,15 @@
+import os
+import subprocess
+
+def create_user(username, password):
+    try:
+        subprocess.run(['sudo', 'useradd', '-m', username], check=True)
+        subprocess.run(['sudo', 'chpasswd'], input=f"{username}:{password}".encode(), check=True)
+        print(f"User {username} created successfully.")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to create user {username}: {e}")
+
+if __name__ == "__main__":
+    username = 'newuser'
+    password = 'password123'
+    create_user(username, password)

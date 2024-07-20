@@ -1,0 +1,20 @@
+import os
+from datetime import datetime
+
+def backup_postgresql(db_name, user, password, host, port, backup_dir):
+    date = datetime.now().strftime('%Y%m%d_%H%M%S')
+    backup_file = f"{backup_dir}/{db_name}_{date}.sql"
+    os.environ['PGPASSWORD'] = password
+    command = f"pg_dump -U {user} -h {host} -p {port} {db_name} > {backup_file}"
+    os.system(command)
+    print(f"Backup completed: {backup_file}")
+
+if __name__ == "__main__":
+    db_name = 'your_database'
+    user = 'your_db_user'
+    password = 'your_db_password'
+    host = 'localhost'
+    port = '5432'
+    backup_dir = '/path/to/backup'
+    
+    backup_postgresql(db_name, user, password, host, port, backup_dir)

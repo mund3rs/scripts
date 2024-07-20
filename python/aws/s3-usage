@@ -1,0 +1,19 @@
+import boto3
+
+def get_s3_bucket_sizes():
+    s3 = boto3.client('s3')
+    buckets = s3.list_buckets()['Buckets']
+    
+    for bucket in buckets:
+        bucket_name = bucket['Name']
+        total_size = 0
+        response = s3.list_objects_v2(Bucket=bucket_name)
+        
+        if 'Contents' in response:
+            for obj in response['Contents']:
+                total_size += obj['Size']
+        
+        print(f"Bucket: {bucket_name}, Size: {total_size / (1024 * 1024):.2f} MB")
+
+if __name__ == "__main__":
+    get_s3_bucket_sizes()

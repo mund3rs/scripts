@@ -1,0 +1,6 @@
+$action = New-ScheduledTaskAction -Execute "PowerShell.exe" -Argument "-NoProfile -WindowStyle Hidden -File C:\Path\To\YourScript.ps1"
+$trigger = New-ScheduledTaskTrigger -Daily -At 3AM
+$principal = New-ScheduledTaskPrincipal -UserId "SYSTEM" -LogonType ServiceAccount
+$settings = New-ScheduledTaskSettingsSet -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
+
+Register-ScheduledTask -Action $action -Trigger $trigger -Principal $principal -Settings $settings -TaskName "MyScheduledTask" -Description "Runs my PowerShell script daily at 3 AM"

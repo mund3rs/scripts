@@ -1,0 +1,24 @@
+Install-Module -Name ExchangeOnlineManagement
+#
+Connect-ExchangeOnline -UserPrincipalName youradmin@yourdomain.com -ShowProgress $true
+# Function to prompt for user input
+function Prompt-UserInput {
+    param (
+        [string]$PromptMessage
+    )
+    Read-Host -Prompt $PromptMessage
+}
+
+# Prompt for shared mailbox email address
+$sharedMailbox = Prompt-UserInput -PromptMessage "Enter the email address of the shared mailbox"
+
+# Set sent items configuration
+try {
+    Set-MailboxSentItemsConfiguration -Identity $sharedMailbox -SendAsItemsCopiedTo SenderAndFrom -SendOnBehalfOfItemsCopiedTo SenderAndFrom
+    Write-Host "Sent items configuration updated for $sharedMailbox. Sent items will now be saved in the shared mailbox's Sent Items folder."
+} catch {
+    Write-Host "An error occurred: $_"
+}
+
+# Disconnect from Exchange Online
+Disconnect-ExchangeOnline -Confirm:$false
