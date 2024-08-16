@@ -1,0 +1,22 @@
+# Login to Azure Account
+Connect-AzAccount
+
+# Select Subscription
+$subscriptionId = "sub-id"
+Select-AzSubscription -SubscriptionId $subscriptionId
+
+# Define Resource Group and Action
+$resourceGroupName = "resource-group"
+$action = "Start"  # Set to "Stop" to stop VMs
+
+# Get VMs in Resource Group
+$vms = Get-AzVM -ResourceGroupName $resourceGroupName
+
+# Start/Stop VMs
+foreach ($vm in $vms) {
+    if ($action -eq "Start") {
+        Start-AzVM -ResourceGroupName $resourceGroupName -Name $vm.Name
+    } elseif ($action -eq "Stop") {
+        Stop-AzVM -ResourceGroupName $resourceGroupName -Name $vm.Name -Force
+    }
+}
